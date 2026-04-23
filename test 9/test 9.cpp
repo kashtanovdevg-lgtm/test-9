@@ -1,5 +1,8 @@
-﻿#include <iostream>
+#include <iostream>
+#include <fstream>
 #include <clocale>
+
+using namespace std;
 
 enum Genre {
     COMEDY,
@@ -37,20 +40,20 @@ int cmp(const char a[], const char b[]) {
     return 1;
 }
 
-void prt(const Film& f) {
+void printFilm(const Film& f) {
     const char* genreNames[] = { "Комедия", "Триллер", "Драма", "Боевик", "Фэнтези" };
-    std::cout << "Название: " << f.title << "\n";
-    std::cout << "Режиссёр: " << f.director << "\n";
-    std::cout << "Жанр: " << genreNames[f.genre] << "\n";
-    std::cout << "Год: " << f.year << "\n";
-    std::cout << "Длительность: " << f.duration.hours << "ч " << f.duration.minutes << "мин\n";
-    std::cout << "Бюджет: " << f.budget << " млн\n";
-    std::cout << "Рейтинг: " << f.rating << "\n";
-    std::cout << "Главный актёр: " << f.mainActor << "\n";
-    std::cout << "------------------------\n";
+    cout << "Название: " << f.title << "\n";
+    cout << "Режиссёр: " << f.director << "\n";
+    cout << "Жанр: " << genreNames[f.genre] << "\n";
+    cout << "Год: " << f.year << "\n";
+    cout << "Длительность: " << f.duration.hours << "ч " << f.duration.minutes << "мин\n";
+    cout << "Бюджет: " << f.budget << " млн\n";
+    cout << "Рейтинг: " << f.rating << "\n";
+    cout << "Главный актёр: " << f.mainActor << "\n";
+    cout << "------------------------\n";
 }
 
-int fAc(const Film src[], int srcSize, Film dst[], const char actor[]) {
+int filterByActor(const Film src[], int srcSize, Film dst[], const char actor[]) {
     int count = 0;
     for (int i = 0; i < srcSize; ++i) {
         if (cmp(src[i].mainActor, actor) == 0) {
@@ -60,7 +63,7 @@ int fAc(const Film src[], int srcSize, Film dst[], const char actor[]) {
     return count;
 }
 
-void srt(Film arr[], int n) {
+void sortByTitle(Film arr[], int n) {
     for (int i = 0; i < n - 1; ++i) {
         for (int j = 0; j < n - i - 1; ++j) {
             if (cmp(arr[j].title, arr[j + 1].title) > 0) {
@@ -72,38 +75,38 @@ void srt(Film arr[], int n) {
     }
 }
 
-void fnd(const Film arr[], int n, const char title[]) {
+void findFilmByTitle(const Film arr[], int n, const char title[]) {
     for (int i = 0; i < n; ++i) {
         if (cmp(arr[i].title, title) == 0) {
-            prt(arr[i]);
+            printFilm(arr[i]);
             return;
         }
     }
-    std::cout << "Фильм \"" << title << "\" не найден.\n";
+    cout << "Фильм \"" << title << "\" не найден.\n";
 }
 
-void chg(Film& f) {
-    std::cout << "Введите новое название: ";
-    std::cin >> f.title;
-    std::cout << "Введите нового режиссёра: ";
-    std::cin >> f.director;
+void changeFilm(Film& f) {
+    cout << "Введите новое название: ";
+    cin >> f.title;
+    cout << "Введите нового режиссёра: ";
+    cin >> f.director;
     int g;
-    std::cout << "Жанр (0-Комедия,1-Триллер,2-Драма,3-Боевик,4-Фэнтези): ";
-    std::cin >> g;
+    cout << "Жанр (0-Комедия,1-Триллер,2-Драма,3-Боевик,4-Фэнтези): ";
+    cin >> g;
     f.genre = static_cast<Genre>(g);
-    std::cout << "Год: ";
-    std::cin >> f.year;
-    std::cout << "Длительность (часы и минуты через пробел): ";
-    std::cin >> f.duration.hours >> f.duration.minutes;
-    std::cout << "Бюджет (млн): ";
-    std::cin >> f.budget;
-    std::cout << "Рейтинг: ";
-    std::cin >> f.rating;
-    std::cout << "Главный актёр: ";
-    std::cin >> f.mainActor;
+    cout << "Год: ";
+    cin >> f.year;
+    cout << "Длительность (часы и минуты через пробел): ";
+    cin >> f.duration.hours >> f.duration.minutes;
+    cout << "Бюджет (млн): ";
+    cin >> f.budget;
+    cout << "Рейтинг: ";
+    cin >> f.rating;
+    cout << "Главный актёр: ";
+    cin >> f.mainActor;
 }
 
-bool isD(const char director[]) {
+bool isDirectorDavid(const char director[]) {
     const char david[] = "David";
     int i = 0;
     while (david[i] != 0 && director[i] != 0) {
@@ -113,30 +116,30 @@ bool isD(const char director[]) {
     return (director[i] == ' ' || director[i] == 0);
 }
 
-int fDv(const Film src[], int srcSize, Film dst[]) {
+int filterDavidThrillers(const Film src[], int srcSize, Film dst[]) {
     int count = 0;
     for (int i = 0; i < srcSize; ++i) {
-        if (src[i].genre == THRILLER && isD(src[i].director)) {
+        if (src[i].genre == THRILLER && isDirectorDavid(src[i].director)) {
             dst[count++] = src[i];
         }
     }
     return count;
 }
 
-void wrp(const Film arr[], int n) {
+void wrapperDavidThrillers(const Film arr[], int n) {
     Film temp[20];
-    int cnt = fDv(arr, n, temp);
+    int cnt = filterDavidThrillers(arr, n, temp);
     if (cnt == 0) {
-        std::cout << "Нет триллеров с режиссёром Дэвид.\n";
+        cout << "Нет триллеров с режиссёром Дэвид.\n";
         return;
     }
-    std::cout << "=== Триллеры режиссёров по имени Дэвид ===\n";
+    cout << "=== Триллеры режиссёров по имени Дэвид ===\n";
     for (int i = 0; i < cnt; ++i) {
-        prt(temp[i]);
+        printFilm(temp[i]);
     }
 }
 
-void top4(const Film arr[], int n) {
+void top4Expensive2020s(const Film arr[], int n) {
     Film temp[20];
     int cnt = 0;
     for (int i = 0; i < n; ++i) {
@@ -145,7 +148,7 @@ void top4(const Film arr[], int n) {
         }
     }
     if (cnt == 0) {
-        std::cout << "Нет фильмов 2020-х годов.\n";
+        cout << "Нет фильмов 2020-х годов.\n";
         return;
     }
     for (int i = 0; i < cnt - 1; ++i) {
@@ -157,17 +160,73 @@ void top4(const Film arr[], int n) {
             }
         }
     }
-    int top;
-    if (cnt < 4) {
-        top = cnt;
-    }
-    else {
-        top = 4;
-    }
-    std::cout << "=== " << top << " самых дорогих фильмов 2020-х ===\n";
+    int top = (cnt < 4) ? cnt : 4;
+    cout << "=== " << top << " самых дорогих фильмов 2020-х ===\n";
     for (int i = 0; i < top; ++i) {
-        std::cout << temp[i].title << " (" << temp[i].budget << " млн)\n";
+        cout << temp[i].title << " (" << temp[i].budget << " млн)\n";
     }
+}
+
+void updateRatingsFromFile(Film arr[], int n, const char* filename) {
+    ifstream fin(filename);
+    if (!fin.is_open()) {
+        cout << "Не удалось открыть файл " << filename << " для чтения.\n";
+        return;
+    }
+
+    char name[100];
+    float newRating;
+    int updated = 0;
+
+    while (fin >> name >> newRating) {
+        bool found = false;
+        for (int i = 0; i < n; ++i) {
+            if (cmp(arr[i].title, name) == 0) {
+                arr[i].rating = newRating;
+                found = true;
+                updated++;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Фильм \"" << name << "\" не найден, рейтинг не обновлён.\n";
+        }
+    }
+    fin.close();
+    cout << "Обновлено рейтингов: " << updated << "\n";
+}
+
+void saveToBinary(const Film arr[], int size, const char* filename) {
+    ofstream fout(filename, ios::binary | ios::out);
+    if (!fout.is_open()) {
+        cout << "Ошибка открытия файла " << filename << " для записи.\n";
+        return;
+    }
+    fout.write(reinterpret_cast<const char*>(arr), size * sizeof(Film));
+    fout.close();
+    cout << "Массив структур сохранён в бинарный файл " << filename << "\n";
+}
+
+int loadFromBinary(Film arr[], int maxSize, const char* filename) {
+    ifstream fin(filename, ios::binary | ios::in);
+    if (!fin.is_open()) {
+        cout << "Ошибка открытия файла " << filename << " для чтения.\n";
+        return 0;
+    }
+    fin.seekg(0, ios::end);
+    streampos fileSize = fin.tellg();
+    fin.seekg(0, ios::beg);
+
+    int elements = fileSize / sizeof(Film);
+    if (elements > maxSize) {
+        cout << "Файл содержит больше элементов (" << elements
+             << "), чем может вместить массив (" << maxSize << ").\n";
+        elements = maxSize;
+    }
+    fin.read(reinterpret_cast<char*>(arr), elements * sizeof(Film));
+    fin.close();
+    cout << "Из бинарного файла " << filename << " загружено " << elements << " записей.\n";
+    return elements;
 }
 
 int main() {
@@ -197,23 +256,45 @@ int main() {
     };
 
     Film goslingFilms[20];
-    int goslingCount = fAc(films, 20, goslingFilms, "Ryan Gosling");
-    std::cout << "Фильмы с Райаном Гослингом (всего " << goslingCount << "):\n";
-    for (int i = 0; i < goslingCount; ++i) prt(goslingFilms[i]);
+    int goslingCount = filterByActor(films, 20, goslingFilms, "Ryan Gosling");
+    cout << "Фильмы с Райаном Гослингом (всего " << goslingCount << "):\n";
+    for (int i = 0; i < goslingCount; ++i) printFilm(goslingFilms[i]);
 
-    srt(goslingFilms, goslingCount);
-    std::cout << "\n=== Отсортированные по названию ===\n";
-    for (int i = 0; i < goslingCount; ++i) prt(goslingFilms[i]);
+    sortByTitle(goslingFilms, goslingCount);
+    cout << "\n=== Отсортированные по названию ===\n";
+    for (int i = 0; i < goslingCount; ++i) printFilm(goslingFilms[i]);
 
-    std::cout << "\n=== Поиск фильма 'Drive' ===\n";
-    fnd(films, 20, "Drive");
+    cout << "\n=== Поиск фильма 'Drive' ===\n";
+    findFilmByTitle(films, 20, "Drive");
 
-    std::cout << "\n=== Изменение данных первого фильма ===\n";
-    chg(films[0]);
-    std::cout << "\nИзменённый фильм:\n";
-    prt(films[0]);
+    cout << "\n=== Изменение данных первого фильма ===\n";
+    changeFilm(films[0]);
+    cout << "\nИзменённый фильм:\n";
+    printFilm(films[0]);
 
-    wrp(films, 20);
-    top4(films, 20);
+    wrapperDavidThrillers(films, 20);
+    top4Expensive2020s(films, 20);
 
+    cout << "\n========== Задание 1: обновление рейтингов из текстового файла ==========\n";
+    updateRatingsFromFile(films, 20, "ratings.txt");
+    cout << "\nТекущие рейтинги после обновления (несколько примеров):\n";
+    cout << "Drive rating = " << films[0].rating << "\n";
+    cout << "La La Land rating = " << films[1].rating << "\n";
+    cout << "Se7en rating = " << films[11].rating << "\n";
+    cout << "Inception rating = " << films[18].rating << "\n";
+
+    cout << "\n========== Задание 2: работа с бинарным файлом ==========\n";
+    const char* binaryFile = "films.bin";
+
+    saveToBinary(films, 20, binaryFile);
+
+    Film loadedFilms[20];
+    int loadedCount = loadFromBinary(loadedFilms, 20, binaryFile);
+
+    cout << "\nПроверка загруженных данных (первые 3 фильма):\n";
+    for (int i = 0; i < 3 && i < loadedCount; ++i) {
+        printFilm(loadedFilms[i]);
+    }
+
+    return 0;
 }
